@@ -1,0 +1,4 @@
+soundangle.config.title=SoundAngle config
+soundangle.config.rawAngle=Use raw degrees
+soundangle.config.displayTime=Display time
+soundangle.config.displayTimeFormat=%s: %.1f seconds
