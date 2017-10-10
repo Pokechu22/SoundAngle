@@ -28,8 +28,6 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 	@Shadow
 	private boolean enabled;
 
-	private static final int DISPLAY_TIME = 3000;
-
 	@Overwrite
 	public void renderSubtitles(ScaledResolution resolution) {
 		if (!this.enabled && this.client.gameSettings.showSubtitles) {
@@ -57,7 +55,7 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 			while (itr.hasNext()) {
 				GuiSubtitleOverlay.Subtitle subtitle = itr.next();
 
-				if (subtitle.getStartTime() + DISPLAY_TIME <= Minecraft.getSystemTime()) {
+				if (subtitle.getStartTime() + LiteModSoundAngle.INSTANCE.displayTime <= Minecraft.getSystemTime()) {
 					itr.remove();
 				} else {
 					maxTextWidth = Math.max(maxTextWidth, this.client.fontRenderer.getStringWidth(subtitle.getString()));
@@ -83,7 +81,7 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 				int fontHeight = this.client.fontRenderer.FONT_HEIGHT;
 				int halfHeight = fontHeight / 2;
 				int brightness = MathHelper.floor(MathHelper.clampedLerp(255, 75,
-						(Minecraft.getSystemTime() - subtitle.getStartTime()) / (float)DISPLAY_TIME));
+						(Minecraft.getSystemTime() - subtitle.getStartTime()) / (float)LiteModSoundAngle.INSTANCE.displayTime));
 				int color = 0xFF000000 | brightness << 16 | brightness << 8 | brightness;
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(resolution.getScaledWidth() - boxWidth - 2,

@@ -11,6 +11,13 @@ import com.mumfrey.liteloader.modconfig.ExposableOptions;
 @ExposableOptions(strategy = ConfigStrategy.Versioned, filename="soundangle.json")
 public class LiteModSoundAngle implements LiteMod {
 	@Expose
+	@SerializedName("display_time")
+	/**
+	 * Time to display subtitles for in milliseconds
+	 */
+	public int displayTime = 3000;
+
+	@Expose
 	@SerializedName("caption_mode")
 	public CaptionMode captionMode = CaptionMode.RAW_DEGREES;
 
