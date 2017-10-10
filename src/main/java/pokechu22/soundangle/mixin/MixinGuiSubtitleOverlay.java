@@ -46,14 +46,9 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 					GlStateManager.DestFactor.ZERO);
 
 			Vec3d playerPos = this.client.player.getPositionEyes(1.0f);
-			Vec3d vec3d1 = (new Vec3d(0.0D, 0.0D, -1.0D)).rotatePitch(-this.client.player.rotationPitch * (float)Math.PI/180)
-					.rotateYaw(-this.client.player.rotationYaw * (float)Math.PI/180);
-			Vec3d vec3d2 = (new Vec3d(0.0D, 1.0D, 0.0D)).rotatePitch(-this.client.player.rotationPitch * (float)Math.PI/180)
-					.rotateYaw(-this.client.player.rotationYaw * (float)Math.PI/180);
-			Vec3d vec3d3 = vec3d1.crossProduct(vec3d2);
 
 			int numDrawn = 0;
-			int maxWidth = 0;
+			int maxTextWidth = 0;
 
 			Iterator<GuiSubtitleOverlay.Subtitle> itr = this.subtitles.iterator();
 
@@ -63,44 +58,38 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 				if (subtitle.getStartTime() + DISPLAY_TIME <= Minecraft.getSystemTime()) {
 					itr.remove();
 				} else {
-					maxWidth = Math.max(maxWidth, this.client.fontRenderer.getStringWidth(subtitle.getString()));
+					maxTextWidth = Math.max(maxTextWidth, this.client.fontRenderer.getStringWidth(subtitle.getString()));
 				}
 			}
 
-			maxWidth = maxWidth + this.client.fontRenderer.getStringWidth("<") + this.client.fontRenderer.getStringWidth(" ")
-					+ this.client.fontRenderer.getStringWidth(">") + this.client.fontRenderer.getStringWidth(" ");
+			int boxWidth = maxTextWidth + this.client.fontRenderer.getStringWidth(" -000.0");
 
 			for (GuiSubtitleOverlay.Subtitle subtitle : this.subtitles) {
-				String s = subtitle.getString();
-				Vec3d vec3d4 = subtitle.getLocation().subtract(playerPos).normalize();
-				double d0 = -vec3d3.dotProduct(vec3d4);
-				double d1 = -vec3d1.dotProduct(vec3d4);
-				boolean flag = d1 > 0.5D;
-				int halfWidth = maxWidth / 2;
+				String subtitleText = subtitle.getString();
+
+				Vec3d pos = subtitle.getLocation();
+				Vec3d offset = new Vec3d(pos.x - playerPos.x, 0, pos.z - playerPos.z).normalize();
+
+				double angle = Math.toDegrees(MathHelper.atan2(offset.x, offset.z));
+				String angleText = String.format("%.1f", angle);
+				int angleWidth = client.fontRenderer.getStringWidth(angleText);
+
 				int fontHeight = this.client.fontRenderer.FONT_HEIGHT;
 				int halfHeight = fontHeight / 2;
-				int lineWidth = this.client.fontRenderer.getStringWidth(s);
 				int brightness = MathHelper.floor(MathHelper.clampedLerp(255, 75,
 						(Minecraft.getSystemTime() - subtitle.getStartTime()) / (float)DISPLAY_TIME));
 				int color = 0xFF000000 | brightness << 16 | brightness << 8 | brightness;
 				GlStateManager.pushMatrix();
-				GlStateManager.translate(resolution.getScaledWidth() - halfWidth - 2,
+				GlStateManager.translate(resolution.getScaledWidth() - boxWidth - 2,
 						resolution.getScaledHeight() - 30 - numDrawn * (fontHeight + 1), 0);
 				GlStateManager.scale(1.0F, 1.0F, 1.0F);
-				drawRect(-halfWidth - 1, -halfHeight - 1, halfWidth + 1, halfHeight + 1, 0xCC000000);
+				drawRect(-1, -halfHeight - 1, boxWidth + 1, halfHeight + 1, 0xCC000000);
 				GlStateManager.enableBlend();
 
-				if (!flag) {
-					if (d0 > 0.0D) {
-						this.client.fontRenderer.drawString(">", halfWidth - this.client.fontRenderer.getStringWidth(">"), -halfHeight,
-								color + 0xFF000000);
-					} else if (d0 < 0.0D) {
-						this.client.fontRenderer.drawString("<", -halfWidth, -halfHeight, color);
-					}
-				}
+				int textWidth = this.client.fontRenderer.getStringWidth(subtitleText);
+				this.client.fontRenderer.drawString(subtitleText, maxTextWidth / 2 - textWidth / 2, -halfHeight, color);
+				this.client.fontRenderer.drawString(angleText, boxWidth - angleWidth, -halfHeight, color);
 
-				drawCenteredString(this.client.fontRenderer, s, 0, -halfHeight, color);
-				this.client.fontRenderer.drawString(s, -lineWidth / 2, -halfHeight, color);
 				GlStateManager.popMatrix();
 				numDrawn++;
 			}
