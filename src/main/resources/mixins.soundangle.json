@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "minVersion": "0.5.3",
+    "package": "pokechu22.soundangle.mixin",
+    "refmap": "mixins.soundangle.refmap.json",
+    "mixins": [
+        "MixinGuiSubtitleOverlay"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

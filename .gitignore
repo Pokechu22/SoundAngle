@@ -1,0 +1,10 @@
+/bin/
+/.gradle/
+/.settings/
+/build/
+/.classpath
+/.project
+/build.number
+/SoundAngle_Client.launch
+/run/
+/libs/

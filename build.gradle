@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = 'sponge'
+            url = 'http://repo.spongepowered.org/maven'
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
+    }
+}
+
+apply plugin: 'java'
+
+version = "0.1"
+group = "pokechu22"
+archivesBaseName = "soundangle"
+
+apply plugin: 'net.minecraftforge.gradle.liteloader'
+apply plugin: 'org.spongepowered.mixin'
+
+minecraft {
+    version = "1.12.2"
+    mappings = "snapshot_20171003"
+    runDir = "run"
+    makeObfSourceJar = false
+}
+
+libsDirName = "../libs/${version}"
+
+litemod {
+    json {
+        name = "soundangle"
+        displayName = "Sound angle utility"
+        author = "pokechu22"
+        mcversion = "1.12.2"
+        mixinConfigs += "mixins.soundangle.json"
+        version = project.version
+        description = "Provides angles at which sounds are found."
+    }
+}
+
+jar {
+    from litemod.outputs
+}
