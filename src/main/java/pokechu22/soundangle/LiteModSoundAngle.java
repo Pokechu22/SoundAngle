@@ -2,9 +2,19 @@ package pokechu22.soundangle;
 
 import java.io.File;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.mumfrey.liteloader.LiteMod;
+import com.mumfrey.liteloader.modconfig.ConfigStrategy;
+import com.mumfrey.liteloader.modconfig.ExposableOptions;
 
+@ExposableOptions(strategy = ConfigStrategy.Versioned, filename="soundangle.json")
 public class LiteModSoundAngle implements LiteMod {
+	@Expose
+	@SerializedName("caption_mode")
+	public CaptionMode captionMode = CaptionMode.RAW_DEGREES;
+
+	public static LiteModSoundAngle INSTANCE;
 
 	@Override
 	public String getName() {
@@ -18,12 +28,16 @@ public class LiteModSoundAngle implements LiteMod {
 
 	@Override
 	public void init(File configPath) {
-
+		INSTANCE = this;
 	}
 
 	@Override
 	public void upgradeSettings(String version, File configPath, File oldConfigPath) {
 
 	}
-	
+
+	public static enum CaptionMode {
+		RAW_DEGREES,
+		DEGREES_FROM_PLAYER
+	}
 }

@@ -16,6 +16,8 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import pokechu22.soundangle.LiteModSoundAngle;
+import pokechu22.soundangle.LiteModSoundAngle.CaptionMode;
 
 @Mixin(GuiSubtitleOverlay.class)
 public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEventListener {
@@ -71,6 +73,10 @@ public abstract class MixinGuiSubtitleOverlay extends Gui implements ISoundEvent
 				Vec3d offset = new Vec3d(pos.x - playerPos.x, 0, pos.z - playerPos.z).normalize();
 
 				double angle = Math.toDegrees(MathHelper.atan2(offset.x, offset.z));
+				if (LiteModSoundAngle.INSTANCE.captionMode == CaptionMode.DEGREES_FROM_PLAYER) {
+					angle += client.player.rotationYaw;
+				}
+				angle = MathHelper.wrapDegrees(angle);
 				String angleText = String.format("%.1f", angle);
 				int angleWidth = client.fontRenderer.getStringWidth(angleText);
 
